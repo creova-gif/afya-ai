@@ -1,0 +1,330 @@
+/* KUIMARISHA AI - Reusable Brand Classes */
+
+/* ========================================
+   HEADERS
+   ======================================== */
+
+.brand-header {
+  background: linear-gradient(to right, #1EB53A, #0F7A28);
+  color: white;
+  padding: 1.5rem;
+  border-bottom-left-radius: 32px;
+  border-bottom-right-radius: 32px;
+  box-shadow: 0 10px 20px -5px rgba(30, 181, 58, 0.3);
+}
+
+.brand-header-title {
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.brand-header-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+}
+
+/* ========================================
+   CARDS
+   ======================================== */
+
+.brand-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #E5E7EB;
+  transition: all 200ms ease-in-out;
+}
+
+.brand-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.brand-card-title {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.brand-card-text {
+  color: #6B7280;
+  font-size: 0.875rem;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.btn-brand-primary {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(to right, #1EB53A, #0F7A28);
+  color: white;
+  border-radius: 16px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(30, 181, 58, 0.3);
+  transition: all 200ms ease-in-out;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-brand-primary:hover {
+  box-shadow: 0 6px 16px rgba(30, 181, 58, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-brand-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-brand-secondary {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: #1EB53A;
+  border: 2px solid #1EB53A;
+  border-radius: 16px;
+  font-weight: 600;
+  transition: all 200ms ease-in-out;
+  cursor: pointer;
+}
+
+.btn-brand-secondary:hover {
+  background: rgba(30, 181, 58, 0.05);
+  border-color: #0F7A28;
+}
+
+.btn-brand-ghost {
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  color: #374151;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  font-weight: 600;
+  transition: all 200ms ease-in-out;
+  cursor: pointer;
+}
+
+.btn-brand-ghost:hover {
+  border-color: rgba(30, 181, 58, 0.3);
+  color: #1EB53A;
+}
+
+/* ========================================
+   ICON CONTAINERS
+   ======================================== */
+
+.brand-icon-container {
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(to bottom right, #1EB53A, #0F7A28);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(30, 181, 58, 0.3);
+}
+
+.brand-icon-container-sm {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(to bottom right, #1EB53A, #0F7A28);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(30, 181, 58, 0.3);
+}
+
+.brand-icon-container-lg {
+  width: 4rem;
+  height: 4rem;
+  background: linear-gradient(to bottom right, #1EB53A, #0F7A28);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(30, 181, 58, 0.3);
+}
+
+/* ========================================
+   BACKGROUNDS
+   ======================================== */
+
+.brand-bg {
+  background: linear-gradient(135deg, #F9FAFB 0%, #EFF6F3 50%, #E8F5E9 100%);
+  min-height: 100vh;
+}
+
+.brand-bg-alt {
+  background: linear-gradient(to bottom right, #F9FAFB, #EFF6F3, #E8F5E9);
+  min-height: 100vh;
+}
+
+/* ========================================
+   PROGRESS BARS
+   ======================================== */
+
+.brand-progress-container {
+  height: 0.5rem;
+  background: #E5E7EB;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.brand-progress-bar {
+  height: 100%;
+  background: linear-gradient(to right, #1EB53A, #0F7A28);
+  transition: width 300ms ease-in-out;
+  border-radius: 9999px;
+}
+
+.brand-progress-bar-orange {
+  height: 100%;
+  background: linear-gradient(to right, #FF6B35, #E85A2A);
+  transition: width 300ms ease-in-out;
+  border-radius: 9999px;
+}
+
+/* ========================================
+   BADGES
+   ======================================== */
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.brand-badge-green {
+  background: rgba(30, 181, 58, 0.1);
+  color: #0F7A28;
+}
+
+.brand-badge-orange {
+  background: rgba(255, 107, 53, 0.1);
+  color: #E85A2A;
+}
+
+.brand-badge-blue {
+  background: rgba(0, 163, 221, 0.1);
+  color: #0077A3;
+}
+
+/* ========================================
+   NAVIGATION
+   ======================================== */
+
+.brand-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid #E5E7EB;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.brand-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  color: #9CA3AF;
+  transition: color 200ms ease-in-out;
+}
+
+.brand-nav-item-active {
+  color: #1EB53A;
+  font-weight: 600;
+}
+
+.brand-nav-item:hover {
+  color: #6B7280;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.brand-text-primary {
+  color: #111827;
+}
+
+.brand-text-secondary {
+  color: #6B7280;
+}
+
+.brand-text-tertiary {
+  color: #9CA3AF;
+}
+
+.brand-text-green {
+  color: #1EB53A;
+}
+
+.brand-text-orange {
+  color: #FF6B35;
+}
+
+.brand-text-blue {
+  color: #00A3DD;
+}
+
+.brand-shadow {
+  box-shadow: 0 4px 12px rgba(30, 181, 58, 0.3);
+}
+
+.brand-shadow-hover {
+  box-shadow: 0 6px 16px rgba(30, 181, 58, 0.4);
+}
+
+.brand-border {
+  border: 1px solid #E5E7EB;
+}
+
+.brand-border-green {
+  border: 2px solid #1EB53A;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes brand-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.brand-pulse {
+  animation: brand-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes brand-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.brand-bounce {
+  animation: brand-bounce 1s ease-in-out infinite;
+}
