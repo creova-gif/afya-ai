@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Send, Sparkles, Zap, Heart, Activity } from 'lucide-react';
 import { UserProfile } from '../App';
+import AIService from '../services/ai-service';
+import { WorkoutContext } from '../services/ai-prompts';
 
 interface AICoachProps {
   profile: UserProfile;
@@ -42,7 +44,7 @@ export function AICoach({ profile, onBack, onStartWorkout }: AICoachProps) {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = async (text: string) => {
     if (!text.trim()) return;
 
     // Add user message
@@ -55,9 +57,55 @@ export function AICoach({ profile, onBack, onStartWorkout }: AICoachProps) {
     setMessages(prev => [...prev, userMessage]);
     setInputText('');
 
-    // Simulate AI response
+    // Get AI response
     setIsTyping(true);
-    setTimeout(() => {
+    
+    try {
+      // Build context from profile
+      const context: WorkoutContext = {
+        age: profile.age,
+        gender: profile.gender,
+        language: profile.language,
+        environment: profile.environment,
+        fitness_level: profile.workoutIntensity || 'beginner',
+        available_minutes: profile.availableTimeMinutes || 20,
+        health_flags: profile.healthFlags || [],
+        goals: profile.goals || [],
+        location: profile.location,
+      };
+
+      // Get conversation history for context
+      const conversationHistory = messages
+        .filter(m => m.sender !== 'coach' || m.id !== '1') // Exclude initial greeting
+        .map(m => ({
+          role: m.sender === 'user' ? 'user' as const : 'assistant' as const,
+          content: m.text,
+        }));
+
+      // Call real AI service
+      const aiResponse = await AIService.chat(text, context, conversationHistory);
+
+      const coachMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: aiResponse,
+        sender: 'coach',
+        timestamp: new Date(),
+      };
+      
+      setMessages(prev => [...prev, coachMessage]);
+
+      // Save conversation to database (non-blocking)
+      if (profile.id) {
+        AIService.saveConversation(profile.id, {
+          user_message: text,
+          ai_response: aiResponse,
+          context,
+        }).catch(err => console.error('Failed to save conversation:', err));
+      }
+    } catch (error) {
+      console.error('AI Coach error:', error);
+      
+      // Fallback to demo response
       const aiResponse = generateAIResponse(text);
       const coachMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -67,8 +115,9 @@ export function AICoach({ profile, onBack, onStartWorkout }: AICoachProps) {
         suggestions: aiResponse.suggestions,
       };
       setMessages(prev => [...prev, coachMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const generateAIResponse = (userText: string) => {

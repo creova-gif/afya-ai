@@ -1,14 +1,16 @@
-import { ArrowLeft, User, Globe, Bell, Shield, Info, ChevronRight } from 'lucide-react';
-import { UserProfile } from '../App';
+import { ArrowLeft, User, Globe, Bell, Shield, Info, ChevronRight, LogOut, Crown, Users as UsersIcon } from 'lucide-react';
+import { UserProfile, Screen } from '../App';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface SettingsProps {
   profile: UserProfile;
   onUpdateProfile: (profile: UserProfile) => void;
   onBack: () => void;
+  onLogout: () => void;
+  onNavigate?: (screen: Screen) => void;
 }
 
-export function Settings({ profile, onUpdateProfile, onBack }: SettingsProps) {
+export function Settings({ profile, onUpdateProfile, onBack, onLogout, onNavigate }: SettingsProps) {
   const text = profile.language === 'sw' ? {
     settings: 'Mipangilio',
     profile: 'Wasifu',
@@ -22,6 +24,10 @@ export function Settings({ profile, onUpdateProfile, onBack }: SettingsProps) {
     goals: 'Malengo',
     editProfile: 'Hariri Wasifu',
     version: 'Toleo',
+    subscription: 'Usajili',
+    premium: 'Premium',
+    social: 'Ushindani',
+    friends: 'Marafiki & Changamoto',
   } : {
     settings: 'Settings',
     profile: 'Profile',
@@ -35,6 +41,10 @@ export function Settings({ profile, onUpdateProfile, onBack }: SettingsProps) {
     goals: 'Goals',
     editProfile: 'Edit Profile',
     version: 'Version',
+    subscription: 'Subscription',
+    premium: 'Premium',
+    social: 'Social',
+    friends: 'Friends & Challenges',
   };
 
   const settingsSections = [
@@ -165,6 +175,64 @@ export function Settings({ profile, onUpdateProfile, onBack }: SettingsProps) {
               onLanguageChange={(lang) => onUpdateProfile({ ...profile, language: lang })}
             />
           </div>
+        </div>
+
+        {/* Subscription & Social */}
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+          {/* Subscription */}
+          <button
+            onClick={() => onNavigate?.('subscription')}
+            className="w-full flex items-center gap-4 p-5 hover:bg-white/5 transition-colors border-b border-white/5"
+          >
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-white">
+              <Crown className="w-5 h-5" />
+            </div>
+            <div className="flex-1 text-left">
+              <div className="text-base text-white" style={{ fontWeight: 600 }}>
+                {text.subscription}
+              </div>
+              <div className="text-sm text-white/60" style={{ fontWeight: 500 }}>
+                {text.premium}
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-white/40" />
+          </button>
+
+          {/* Social */}
+          <button
+            onClick={() => onNavigate?.('social')}
+            className="w-full flex items-center gap-4 p-5 hover:bg-white/5 transition-colors"
+          >
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white">
+              <UsersIcon className="w-5 h-5" />
+            </div>
+            <div className="flex-1 text-left">
+              <div className="text-base text-white" style={{ fontWeight: 600 }}>
+                {text.social}
+              </div>
+              <div className="text-sm text-white/60" style={{ fontWeight: 500 }}>
+                {text.friends}
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-white/40" />
+          </button>
+        </div>
+
+        {/* Logout Button */}
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center gap-4 p-5 hover:bg-white/5 transition-colors"
+          >
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white">
+              <LogOut className="w-5 h-5" />
+            </div>
+            <div className="flex-1 text-left">
+              <div className="text-base text-white" style={{ fontWeight: 600 }}>
+                Logout
+              </div>
+            </div>
+          </button>
         </div>
 
         {/* App Info */}

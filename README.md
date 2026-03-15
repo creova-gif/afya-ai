@@ -1,7 +1,7 @@
 
-  # Health & Fitness OS
+  # Afya AI
 
-  This is a code bundle for Health & Fitness OS. The original project is available at https://www.figma.com/design/KvvIlebronJngPEeCrUb6L/Health---Fitness-OS.
+  This is a code bundle for Afya AI. The original project is available at https://www.figma.com/design/KvvIlebronJngPEeCrUb6L/Afya-AI.
 
   ## Running the code
 

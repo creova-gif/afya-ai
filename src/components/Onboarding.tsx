@@ -29,6 +29,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
     availableTimeMinutes: 30,
     notifications: true,
     dataConsent: false,
+    password: '', // Add password field
   });
 
   const text = language === 'sw' ? {
@@ -259,6 +260,8 @@ export function Onboarding({ onComplete }: OnboardingProps) {
     const profile: UserProfile = {
       id: Date.now().toString(),
       name: formData.name,
+      email: formData.email,
+      password: formData.password,
       age: parseInt(formData.age) || 25,
       gender: formData.gender,
       language,
@@ -566,6 +569,44 @@ export function Onboarding({ onComplete }: OnboardingProps) {
                 placeholder="John Doe"
                 className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl text-white placeholder:text-white/30 focus:outline-none focus:border-[#1EB53A] transition-colors"
                 style={{ fontWeight: 600 }}
+              />
+            </div>
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-sm text-white/60 mb-2" style={{ fontWeight: 600 }}>
+              {text.email}
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="john@example.com"
+                className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl text-white placeholder:text-white/30 focus:outline-none focus:border-[#1EB53A] transition-colors"
+                style={{ fontWeight: 600 }}
+                required
+              />
+            </div>
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-sm text-white/60 mb-2" style={{ fontWeight: 600 }}>
+              {language === 'sw' ? 'Neno la Siri' : 'Password'}
+            </label>
+            <div className="relative">
+              <input
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                placeholder={language === 'sw' ? 'Angalau herufi 6' : 'Minimum 6 characters'}
+                minLength={6}
+                className="w-full px-4 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl text-white placeholder:text-white/30 focus:outline-none focus:border-[#1EB53A] transition-colors"
+                style={{ fontWeight: 600 }}
+                required
               />
             </div>
           </div>

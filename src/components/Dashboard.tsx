@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import { Activity, Flame, Droplet, Footprints, Moon, Utensils, MessageCircle, Dumbbell, Users, TrendingUp, Settings as SettingsIcon, ChevronRight } from 'lucide-react';
+import { Activity, Flame, Droplet, Footprints, Moon, Utensils, MessageCircle, Dumbbell, Users, TrendingUp, Settings as SettingsIcon, ChevronRight, Heart, Trophy } from 'lucide-react';
 import { UserProfile, WorkoutLog, MealLog, HabitLog, Screen } from '../App';
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { NearbyGyms } from './NearbyGyms';
-import { AllGymsModal } from './AllGymsModal';
-import { getNearbyGyms } from '../data/tanzania-gyms';
+import { gamificationService } from '../services/gamification';
 
 interface DashboardProps {
   profile: UserProfile;
@@ -23,15 +21,12 @@ export function Dashboard({
   todayHabits,
   onStartWorkout 
 }: DashboardProps) {
-  const [showAllGymsModal, setShowAllGymsModal] = useState(false);
-  const nearbyGyms = getNearbyGyms(profile.location, 10);
-
+  // Get gamification stats
+  const gamStats = gamificationService.getStats();
+  
   const text = profile.language === 'sw' ? {
     greeting: 'Habari',
-    summary: 'Muhtasari',
     activity: 'Shughuli',
-    nutrition: 'Lishe',
-    mindfulness: 'Utulivu',
     move: 'Tembea',
     exercise: 'Zoezi',
     stand: 'Simama',
@@ -39,20 +34,20 @@ export function Dashboard({
     calories: 'Kalori',
     steps: 'Hatua',
     sleep: 'Usingizi',
-    quickActions: 'Vitendo Haraka',
-    workout: 'Mazoezi',
-    meals: 'Mlo',
-    coach: 'AI Coach',
-    habits: 'Tabia',
-    progress: 'Maendeleo',
-    family: 'Familia',
-    askCoach: 'Uliza Coach',
+    complete: 'Kamili',
+    target: 'Lengo',
+    summary: 'Muhtasari',
+    sharing: 'Kushiriki',
+    trends: 'Mwelekeo',
+    messages: 'Ujumbe',
+    profile: 'Wasifu',
+    achievements: 'Mafanikio',
+    level: 'Kiwango',
+    points: 'Pointi',
+    streak: 'Mfululizo',
   } : {
     greeting: 'Hello',
-    summary: 'Summary',
     activity: 'Activity',
-    nutrition: 'Nutrition',
-    mindfulness: 'Mindfulness',
     move: 'Move',
     exercise: 'Exercise',
     stand: 'Stand',
@@ -60,14 +55,17 @@ export function Dashboard({
     calories: 'Calories',
     steps: 'Steps',
     sleep: 'Sleep',
-    quickActions: 'Quick Actions',
-    workout: 'Workout',
-    meals: 'Meals',
-    coach: 'AI Coach',
-    habits: 'Habits',
-    progress: 'Progress',
-    family: 'Family',
-    askCoach: 'Ask Coach',
+    complete: 'Complete',
+    target: 'Target',
+    summary: 'Summary',
+    sharing: 'Sharing',
+    trends: 'Trends',
+    messages: 'Messages',
+    profile: 'Profile',
+    achievements: 'Achievements',
+    level: 'Level',
+    points: 'Points',
+    streak: 'Streak',
   };
 
   // Calculate stats
@@ -87,30 +85,49 @@ export function Dashboard({
   const workoutTarget = profile.availableTimeMinutes || 30;
   const workoutPercent = Math.min((workoutMinutes / workoutTarget) * 100, 100);
 
+  const sleepHours = todayHabits.sleep || 0;
+  const sleepTarget = 8;
+  const sleepPercent = Math.min((sleepHours / sleepTarget) * 100, 100);
+
   return (
     <div className="min-h-screen bg-[#000000] pb-24">
-      {/* Header - Apple Health style */}
-      <div className="sticky top-0 z-40 bg-[#000000]/80 backdrop-blur-xl border-b border-white/10">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <p className="text-sm text-white/60" style={{ fontWeight: 600 }}>{text.greeting}</p>
-              <h1 className="text-3xl text-white tracking-tight" style={{ fontWeight: 800 }}>
-                {profile.name}
-              </h1>
-            </div>
+      {/* Header - Compact Profile Card */}
+      <div className="px-4 pt-6 pb-4">
+        <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl p-5">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
+              {/* Avatar */}
+              <div className="relative">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#1EB53A] to-[#0F7A28] flex items-center justify-center shadow-[0_8px_24px_rgba(30,181,58,0.3)]">
+                  <span className="text-xl text-white" style={{ fontWeight: 800 }}>
+                    {profile.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#10B981] border-2 border-[#000000]"></div>
+              </div>
+              
+              {/* Name & Greeting */}
+              <div>
+                <p className="text-xs text-white/50" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px' }}>
+                  {text.greeting}
+                </p>
+                <h1 className="text-lg text-white tracking-tight" style={{ fontWeight: 800 }}>
+                  {profile.name}
+                </h1>
+              </div>
+            </div>
+            
+            {/* Actions */}
+            <div className="flex items-center gap-2">
               <LanguageSwitcher 
                 currentLanguage={profile.language} 
                 onLanguageChange={(lang) => {
-                  // Update profile language
                   const updatedProfile = { ...profile, language: lang };
-                  // This would typically call a prop to update the profile
                 }} 
               />
               <button
                 onClick={() => onNavigate('settings')}
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center active:scale-95 transition-transform"
               >
                 <SettingsIcon className="w-5 h-5 text-white" />
               </button>
@@ -119,254 +136,278 @@ export function Dashboard({
         </div>
       </div>
 
-      <div className="px-6 py-6 space-y-8">
-        {/* Activity Rings - Apple Watch style */}
+      {/* Main Content */}
+      <div className="px-4 space-y-6">
+        {/* Activity Rings - Centered & Large */}
         <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl p-8">
-          <h2 className="text-xl text-white mb-6" style={{ fontWeight: 700 }}>{text.activity}</h2>
-          
           <div className="flex items-center justify-center mb-8">
             {/* Concentric rings */}
-            <div className="relative w-56 h-56">
+            <div className="relative w-64 h-64">
               {/* Move ring (outer - green) */}
               <svg className="absolute inset-0 w-full h-full -rotate-90">
                 <circle
-                  cx="112"
-                  cy="112"
-                  r="100"
+                  cx="128"
+                  cy="128"
+                  r="110"
                   fill="none"
-                  stroke="rgba(30, 181, 58, 0.2)"
-                  strokeWidth="16"
+                  stroke="rgba(30, 181, 58, 0.15)"
+                  strokeWidth="18"
                 />
                 <circle
-                  cx="112"
-                  cy="112"
-                  r="100"
+                  cx="128"
+                  cy="128"
+                  r="110"
                   fill="none"
                   stroke="#1EB53A"
-                  strokeWidth="16"
+                  strokeWidth="18"
                   strokeLinecap="round"
-                  strokeDasharray={`${2 * Math.PI * 100}`}
-                  strokeDashoffset={`${2 * Math.PI * 100 * (1 - stepsPercent / 100)}`}
+                  strokeDasharray={`${2 * Math.PI * 110}`}
+                  strokeDashoffset={`${2 * Math.PI * 110 * (1 - stepsPercent / 100)}`}
                   className="transition-all duration-1000"
+                  style={{ filter: 'drop-shadow(0 0 8px rgba(30, 181, 58, 0.5))' }}
                 />
               </svg>
 
-              {/* Exercise ring (middle - orange) */}
+              {/* Exercise ring (middle - orange/red) */}
               <svg className="absolute inset-0 w-full h-full -rotate-90">
                 <circle
-                  cx="112"
-                  cy="112"
-                  r="80"
+                  cx="128"
+                  cy="128"
+                  r="88"
                   fill="none"
-                  stroke="rgba(255, 107, 53, 0.2)"
-                  strokeWidth="16"
+                  stroke="rgba(255, 107, 53, 0.15)"
+                  strokeWidth="18"
                 />
                 <circle
-                  cx="112"
-                  cy="112"
-                  r="80"
+                  cx="128"
+                  cy="128"
+                  r="88"
                   fill="none"
                   stroke="#FF6B35"
-                  strokeWidth="16"
+                  strokeWidth="18"
                   strokeLinecap="round"
-                  strokeDasharray={`${2 * Math.PI * 80}`}
-                  strokeDashoffset={`${2 * Math.PI * 80 * (1 - workoutPercent / 100)}`}
+                  strokeDasharray={`${2 * Math.PI * 88}`}
+                  strokeDashoffset={`${2 * Math.PI * 88 * (1 - workoutPercent / 100)}`}
                   className="transition-all duration-1000"
+                  style={{ filter: 'drop-shadow(0 0 8px rgba(255, 107, 53, 0.5))' }}
                 />
               </svg>
 
-              {/* Stand ring (inner - blue) */}
+              {/* Water ring (inner - blue) */}
               <svg className="absolute inset-0 w-full h-full -rotate-90">
                 <circle
-                  cx="112"
-                  cy="112"
-                  r="60"
+                  cx="128"
+                  cy="128"
+                  r="66"
                   fill="none"
-                  stroke="rgba(0, 163, 221, 0.2)"
-                  strokeWidth="16"
+                  stroke="rgba(0, 163, 221, 0.15)"
+                  strokeWidth="18"
                 />
                 <circle
-                  cx="112"
-                  cy="112"
-                  r="60"
+                  cx="128"
+                  cy="128"
+                  r="66"
                   fill="none"
                   stroke="#00A3DD"
-                  strokeWidth="16"
+                  strokeWidth="18"
                   strokeLinecap="round"
-                  strokeDasharray={`${2 * Math.PI * 60}`}
-                  strokeDashoffset={`${2 * Math.PI * 60 * (1 - waterPercent / 100)}`}
+                  strokeDasharray={`${2 * Math.PI * 66}`}
+                  strokeDashoffset={`${2 * Math.PI * 66 * (1 - waterPercent / 100)}`}
                   className="transition-all duration-1000"
+                  style={{ filter: 'drop-shadow(0 0 8px rgba(0, 163, 221, 0.5))' }}
                 />
               </svg>
 
               {/* Center text */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-4xl text-white" style={{ fontWeight: 800 }}>
+                  <div className="text-5xl text-white mb-1" style={{ fontWeight: 800 }}>
                     {Math.round((stepsPercent + workoutPercent + waterPercent) / 3)}%
                   </div>
-                  <div className="text-sm text-white/60" style={{ fontWeight: 600 }}>Complete</div>
+                  <div className="text-sm text-white/60" style={{ fontWeight: 600 }}>{text.complete}</div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Ring legends */}
+          {/* Ring metrics - 3 columns */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <div className="w-3 h-3 rounded-full bg-[#1EB53A]"></div>
+            <button
+              onClick={() => onNavigate('habits')}
+              className="text-center active:scale-95 transition-transform"
+            >
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-[#1EB53A] shadow-[0_0_8px_rgba(30,181,58,0.6)]"></div>
                 <span className="text-xs text-white/60" style={{ fontWeight: 600 }}>{text.move}</span>
               </div>
-              <div className="text-2xl text-white" style={{ fontWeight: 700 }}>{steps.toLocaleString()}</div>
+              <div className="text-2xl text-white mb-0.5" style={{ fontWeight: 700 }}>{steps.toLocaleString()}</div>
               <div className="text-xs text-white/40">{stepsTarget.toLocaleString()} {text.steps}</div>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <div className="w-3 h-3 rounded-full bg-[#FF6B35]"></div>
+            </button>
+            
+            <button
+              onClick={() => onNavigate('workout')}
+              className="text-center active:scale-95 transition-transform"
+            >
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-[#FF6B35] shadow-[0_0_8px_rgba(255,107,53,0.6)]"></div>
                 <span className="text-xs text-white/60" style={{ fontWeight: 600 }}>{text.exercise}</span>
               </div>
-              <div className="text-2xl text-white" style={{ fontWeight: 700 }}>{workoutMinutes}</div>
+              <div className="text-2xl text-white mb-0.5" style={{ fontWeight: 700 }}>{workoutMinutes}</div>
               <div className="text-xs text-white/40">{workoutTarget} min</div>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <div className="w-3 h-3 rounded-full bg-[#00A3DD]"></div>
+            </button>
+            
+            <button
+              onClick={() => onNavigate('habits')}
+              className="text-center active:scale-95 transition-transform"
+            >
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-[#00A3DD] shadow-[0_0_8px_rgba(0,163,221,0.6)]"></div>
                 <span className="text-xs text-white/60" style={{ fontWeight: 600 }}>{text.water}</span>
               </div>
-              <div className="text-2xl text-white" style={{ fontWeight: 700 }}>{waterGlasses}</div>
+              <div className="text-2xl text-white mb-0.5" style={{ fontWeight: 700 }}>{waterGlasses}</div>
               <div className="text-xs text-white/40">{waterTarget} glasses</div>
-            </div>
+            </button>
           </div>
         </div>
 
-        {/* Stats Grid - Apple Health style */}
+        {/* Stats Cards - 2 columns */}
         <div className="grid grid-cols-2 gap-4">
           {/* Calories */}
           <button
             onClick={() => onNavigate('food')}
-            className="bg-gradient-to-br from-[#FF6B35]/20 to-[#E85A2A]/10 border border-[#FF6B35]/30 rounded-3xl p-6 text-left hover:scale-[1.02] active:scale-[0.98] transition-transform"
+            className="bg-gradient-to-br from-[#FF6B35]/20 to-[#E85A2A]/10 border border-[#FF6B35]/30 rounded-3xl p-6 text-left active:scale-95 transition-transform"
           >
-            <Flame className="w-8 h-8 text-[#FF6B35] mb-3" strokeWidth={2.5} />
+            <div className="flex items-center justify-between mb-3">
+              <Flame className="w-7 h-7 text-[#FF6B35]" strokeWidth={2.5} />
+              <div className="text-xs text-[#FF6B35]/60" style={{ fontWeight: 600 }}>
+                {Math.round(caloriesPercent)}%
+              </div>
+            </div>
             <div className="text-3xl text-white mb-1" style={{ fontWeight: 800 }}>
               {caloriesConsumed}
             </div>
-            <div className="text-sm text-white/60" style={{ fontWeight: 600 }}>
+            <div className="text-sm text-white/60 mb-1" style={{ fontWeight: 600 }}>
               {text.calories}
             </div>
-            <div className="text-xs text-white/40 mt-2">
-              {caloriesTarget} target
+            <div className="text-xs text-white/40">
+              {caloriesTarget} {text.target.toLowerCase()}
             </div>
           </button>
 
           {/* Sleep */}
           <button
             onClick={() => onNavigate('habits')}
-            className="bg-gradient-to-br from-[#00A3DD]/20 to-[#0077A3]/10 border border-[#00A3DD]/30 rounded-3xl p-6 text-left hover:scale-[1.02] active:scale-[0.98] transition-transform"
+            className="bg-gradient-to-br from-[#9333EA]/20 to-[#7C3AED]/10 border border-[#9333EA]/30 rounded-3xl p-6 text-left active:scale-95 transition-transform"
           >
-            <Moon className="w-8 h-8 text-[#00A3DD] mb-3" strokeWidth={2.5} />
-            <div className="text-3xl text-white mb-1" style={{ fontWeight: 800 }}>
-              {todayHabits.sleep || 0}
+            <div className="flex items-center justify-between mb-3">
+              <Moon className="w-7 h-7 text-[#9333EA]" strokeWidth={2.5} />
+              <div className="text-xs text-[#9333EA]/60" style={{ fontWeight: 600 }}>
+                {Math.round(sleepPercent)}%
+              </div>
             </div>
-            <div className="text-sm text-white/60" style={{ fontWeight: 600 }}>
+            <div className="text-3xl text-white mb-1" style={{ fontWeight: 800 }}>
+              {sleepHours}h
+            </div>
+            <div className="text-sm text-white/60 mb-1" style={{ fontWeight: 600 }}>
               {text.sleep}
             </div>
-            <div className="text-xs text-white/40 mt-2">
-              8 hours target
+            <div className="text-xs text-white/40">
+              {sleepTarget}h {text.target.toLowerCase()}
             </div>
           </button>
         </div>
 
-        {/* Quick Actions */}
-        <div>
-          <h2 className="text-xl text-white mb-4 px-1" style={{ fontWeight: 700 }}>{text.quickActions}</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => onNavigate('workout')}
-              className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 active:scale-[0.98] transition-all"
-            >
-              <Dumbbell className="w-6 h-6 text-[#1EB53A] mb-3" strokeWidth={2.5} />
-              <div className="text-sm text-white" style={{ fontWeight: 700 }}>{text.workout}</div>
-            </button>
-
-            <button
-              onClick={() => onNavigate('food')}
-              className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 active:scale-[0.98] transition-all"
-            >
-              <Utensils className="w-6 h-6 text-[#FF6B35] mb-3" strokeWidth={2.5} />
-              <div className="text-sm text-white" style={{ fontWeight: 700 }}>{text.meals}</div>
-            </button>
-
-            <button
-              onClick={() => onNavigate('coach')}
-              className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 active:scale-[0.98] transition-all"
-            >
-              <MessageCircle className="w-6 h-6 text-[#00A3DD] mb-3" strokeWidth={2.5} />
-              <div className="text-sm text-white" style={{ fontWeight: 700 }}>{text.coach}</div>
-            </button>
-
-            <button
-              onClick={() => onNavigate('progress')}
-              className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 active:scale-[0.98] transition-all"
-            >
-              <TrendingUp className="w-6 h-6 text-[#1EB53A] mb-3" strokeWidth={2.5} />
-              <div className="text-sm text-white" style={{ fontWeight: 700 }}>{text.progress}</div>
-            </button>
+        {/* Achievements Card - Full Width */}
+        <button
+          onClick={() => onNavigate('achievements')}
+          className="bg-gradient-to-br from-yellow-500/20 to-orange-500/10 border border-yellow-500/30 rounded-3xl p-6 text-left active:scale-95 transition-transform"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
+                <Trophy className="w-7 h-7 text-white" strokeWidth={2.5} />
+              </div>
+              <div>
+                <div className="text-lg text-white mb-0.5" style={{ fontWeight: 700 }}>
+                  {text.achievements}
+                </div>
+                <div className="text-xs text-white/60" style={{ fontWeight: 600 }}>
+                  {text.level} {gamStats.level} • {gamStats.totalPoints.toLocaleString()} {text.points}
+                </div>
+              </div>
+            </div>
+            <ChevronRight className="w-6 h-6 text-white/40" />
           </div>
-        </div>
-
-        {/* Nearby Gyms */}
-        {nearbyGyms.length > 0 && (
-          <div>
-            <NearbyGyms 
-              gyms={nearbyGyms.slice(0, 3)} 
-              onViewAll={() => setShowAllGymsModal(true)}
-            />
+          
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <div className="flex justify-between text-xs text-white/60 mb-1">
+                <span>{text.streak}</span>
+                <span>{gamStats.streaks.workout.current} {profile.language === 'sw' ? 'siku' : 'days'}</span>
+              </div>
+              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-yellow-500 to-orange-500"
+                  style={{ width: `${Math.min((gamStats.streaks.workout.current / 30) * 100, 100)}%` }}
+                />
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl" style={{ fontWeight: 800 }}>
+                {gamStats.achievements.filter(a => a.unlocked).length}
+              </div>
+              <div className="text-xs text-white/40">
+                {gamStats.achievements.filter(a => !a.unlocked).length} left
+              </div>
+            </div>
           </div>
-        )}
+        </button>
       </div>
 
-      {/* Bottom Navigation - iOS style */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#000000]/90 backdrop-blur-2xl border-t border-white/10">
-        <div className="flex items-center justify-around px-6 py-3 safe-bottom">
+      {/* Bottom Navigation - Mobile-first, 5 tabs max, 48px minimum */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[#000000]/95 backdrop-blur-2xl border-t border-white/10">
+        <div className="flex items-center justify-around px-2 py-2 safe-bottom">
           <button
             onClick={() => onNavigate('dashboard')}
-            className="flex flex-col items-center gap-1 py-2"
+            className="flex flex-col items-center gap-1 py-2 px-4 min-h-[48px] min-w-[48px] active:scale-95 transition-transform"
           >
             <Activity className="w-6 h-6 text-[#1EB53A]" strokeWidth={2.5} />
-            <span className="text-xs text-[#1EB53A]" style={{ fontWeight: 700 }}>Summary</span>
+            <span className="text-xs text-[#1EB53A]" style={{ fontWeight: 700 }}>{text.summary}</span>
           </button>
 
           <button
-            onClick={() => onNavigate('habits')}
-            className="flex flex-col items-center gap-1 py-2"
+            onClick={() => onNavigate('wellness')}
+            className="flex flex-col items-center gap-1 py-2 px-4 min-h-[48px] min-w-[48px] active:scale-95 transition-transform"
           >
-            <Droplet className="w-6 h-6 text-white/40" strokeWidth={2.5} />
-            <span className="text-xs text-white/40" style={{ fontWeight: 600 }}>Habits</span>
-          </button>
-
-          <button
-            onClick={() => onNavigate('family')}
-            className="flex flex-col items-center gap-1 py-2"
-          >
-            <Users className="w-6 h-6 text-white/40" strokeWidth={2.5} />
-            <span className="text-xs text-white/40" style={{ fontWeight: 600 }}>Family</span>
+            <Heart className="w-6 h-6 text-white/40" strokeWidth={2.5} />
+            <span className="text-xs text-white/40" style={{ fontWeight: 600 }}>{text.trends}</span>
           </button>
 
           <button
             onClick={() => onNavigate('coach')}
-            className="flex flex-col items-center gap-1 py-2"
+            className="flex flex-col items-center gap-1 py-2 px-4 min-h-[48px] min-w-[48px] active:scale-95 transition-transform"
           >
             <MessageCircle className="w-6 h-6 text-white/40" strokeWidth={2.5} />
-            <span className="text-xs text-white/40" style={{ fontWeight: 600 }}>Coach</span>
+            <span className="text-xs text-white/40" style={{ fontWeight: 600 }}>{text.messages}</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('family')}
+            className="flex flex-col items-center gap-1 py-2 px-4 min-h-[48px] min-w-[48px] active:scale-95 transition-transform"
+          >
+            <Users className="w-6 h-6 text-white/40" strokeWidth={2.5} />
+            <span className="text-xs text-white/40" style={{ fontWeight: 600 }}>{text.sharing}</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('settings')}
+            className="flex flex-col items-center gap-1 py-2 px-4 min-h-[48px] min-w-[48px] active:scale-95 transition-transform"
+          >
+            <SettingsIcon className="w-6 h-6 text-white/40" strokeWidth={2.5} />
+            <span className="text-xs text-white/40" style={{ fontWeight: 600 }}>{text.profile}</span>
           </button>
         </div>
       </div>
-
-      {/* All Gyms Modal */}
-      {showAllGymsModal && (
-        <AllGymsModal onClose={() => setShowAllGymsModal(false)} />
-      )}
     </div>
   );
 }
