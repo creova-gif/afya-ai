@@ -10,7 +10,7 @@
 
 Afya AI ("afya" — Swahili for health) is a personal health and fitness app combining an AI coach, food/meal tracking, workout sessions with form-check guidance, habit tracking, progress photos, family profiles, and a "School Mode" variant. It includes Supabase integration (migrations and edge functions present) and multi-language support.
 
-[ADD SCREENSHOT HERE]
+![Afya AI landing page](docs/screenshots/dashboard.png)
 
 ## Status: In active development
 
