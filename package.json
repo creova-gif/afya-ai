@@ -36,23 +36,23 @@
     "embla-carousel-react": "^8.6.0",
     "hono": "*",
     "input-otp": "^1.4.2",
-    "lucide-react": "^0.487.0",
+    "lucide-react": "^1.49.0",
     "motion": "*",
     "next-themes": "^0.4.6",
-    "react": "^18.3.1",
-    "react-day-picker": "^8.10.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.3.0",
+    "react-day-picker": "^10.0.2",
+    "react-dom": "^19.3.0",
     "react-hook-form": "^7.55.0",
-    "react-resizable-panels": "^2.1.7",
-    "recharts": "^2.15.2",
+    "react-resizable-panels": "^4.14.1",
+    "recharts": "^3.10.1",
     "sonner": "^2.0.3",
     "tailwind-merge": "*",
     "vaul": "^1.1.2"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0",
+    "@types/node": "^26.6.3",
     "@vitejs/plugin-react-swc": "^3.10.2",
-    "vite": "6.3.5"
+    "vite": "8.3.2"
   },
   "scripts": {
     "dev": "vite",
