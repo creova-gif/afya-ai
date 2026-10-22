@@ -375,17 +375,17 @@ export function Dashboard({
               </div>
               <div>
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider mb-1">
-                  Kituo cha Afya / CHW
+                  Kituo cha Afya / CHW & USSD
                 </div>
                 <div className="text-lg text-white font-bold">
-                  Dispensary Triage Inbox
+                  Dispensary Triage Inbox & USSD
                 </div>
               </div>
             </div>
             <ChevronRight className="w-6 h-6 text-white/40" />
           </div>
           <p className="text-xs text-white/70">
-            Fuatilia foleni ya wagonjwa, kagua ripoti za SBAR, na rekodi rufaa za haraka.
+            Fuatilia foleni ya wagonjwa, kagua ripoti za SBAR, na tuma taarifa za dharura kwa WhatsApp, SMS au USSD (*152*05#).
           </p>
         </button>
       </div>

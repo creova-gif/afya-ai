@@ -27,6 +27,8 @@ import {
   PhoneCall,
   ArrowRight,
   ShieldAlert,
+  MessageSquare,
+  Radio,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -35,6 +37,8 @@ import {
   TriageService,
 } from '../../services/triageService';
 import { CHWInboxService } from '../../services/chwInboxService';
+import { SMSUssdService } from '../../services/smsUssdService';
+import { USSDSimulatorModal } from './USSDSimulatorModal';
 import { PatientMetadata, PresetScenario, TriageResult } from '../../types/triage';
 
 interface SwahiliTriageModalProps {
@@ -144,6 +148,8 @@ export const SwahiliTriageModal: React.FC<SwahiliTriageModalProps> = ({
     }
   };
 
+  const [isUSSDOpen, setIsUSSDOpen] = useState(false);
+
   const handleCopyWhatsAppText = () => {
     if (!triageResult) return;
     navigator.clipboard.writeText(triageResult.compactWhatsAppText);
@@ -157,6 +163,13 @@ export const SwahiliTriageModal: React.FC<SwahiliTriageModalProps> = ({
       triageResult.compactWhatsAppText
     );
     window.open(url, '_blank');
+  };
+
+  const handleOpenSMS = () => {
+    if (!triageResult) return;
+    const sms = SMSUssdService.compressTriageToSMS(triageResult, patient.chwPhone);
+    window.open(sms.smsUri);
+    toast.success(`Ujumbe wa SMS umezalishwa (${sms.charCount}/160 herufi).`);
   };
 
   const formatTimer = (seconds: number) => {
@@ -451,14 +464,30 @@ export const SwahiliTriageModal: React.FC<SwahiliTriageModalProps> = ({
                       </p>
                     </div>
 
-                    {/* WhatsApp & Copy Dispatch Actions */}
+                    {/* WhatsApp, SMS & Copy Dispatch Actions */}
                     <div className="pt-2 flex flex-col sm:flex-row gap-2">
                       <Button
                         onClick={handleOpenWhatsApp}
                         className="flex-1 h-9 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 shadow"
                       >
                         <Share2 className="w-3.5 h-3.5" />
-                        Tuma kwa WhatsApp ya CHW ({patient.chwPhone})
+                        Tuma kwa WhatsApp ({patient.chwPhone})
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={handleOpenSMS}
+                        className="h-9 rounded-xl text-xs font-semibold gap-1.5 border-emerald-600/30 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        SMS (2G)
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        onClick={() => setIsUSSDOpen(true)}
+                        className="h-9 rounded-xl text-xs font-semibold gap-1.5"
+                      >
+                        <Radio className="w-3.5 h-3.5 text-emerald-500" />
+                        USSD Sim
                       </Button>
                       <Button
                         variant="outline"
@@ -466,7 +495,7 @@ export const SwahiliTriageModal: React.FC<SwahiliTriageModalProps> = ({
                         className="h-9 rounded-xl text-xs gap-1.5"
                       >
                         <Copy className="w-3.5 h-3.5" />
-                        Nakili Nakala (Copy Text)
+                        Nakili
                       </Button>
                     </div>
                   </CardContent>
@@ -475,6 +504,11 @@ export const SwahiliTriageModal: React.FC<SwahiliTriageModalProps> = ({
             </Tabs>
           </div>
         )}
+
+        <USSDSimulatorModal
+          isOpen={isUSSDOpen}
+          onClose={() => setIsUSSDOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );

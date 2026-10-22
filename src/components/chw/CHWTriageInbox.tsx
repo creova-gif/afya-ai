@@ -27,9 +27,13 @@ import {
   Building2,
   FileText,
   Search,
+  MessageSquare,
+  Radio,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { CHWInboxService } from '../../services/chwInboxService';
+import { SMSUssdService } from '../../services/smsUssdService';
+import { USSDSimulatorModal } from '../triage/USSDSimulatorModal';
 import { CHWCaseStatus, TriageQueueItem } from '../../types/chwInbox';
 import { RiskLevel } from '../../types/triage';
 import { TriageService } from '../../services/triageService';
@@ -44,6 +48,7 @@ export const CHWTriageInbox: React.FC<CHWTriageInboxProps> = ({ onBack }) => {
   const [filterStatus, setFilterStatus] = useState<CHWCaseStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCase, setSelectedCase] = useState<TriageQueueItem | null>(null);
+  const [isUSSDOpen, setIsUSSDOpen] = useState(false);
 
   // Modal edit fields
   const [editStatus, setEditStatus] = useState<CHWCaseStatus>('pending');
@@ -114,16 +119,29 @@ export const CHWTriageInbox: React.FC<CHWTriageInboxProps> = ({ onBack }) => {
             </div>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleResetDefaults}
-            className="rounded-xl text-xs gap-1.5 h-8 text-muted-foreground hover:text-foreground"
-            title="Rudisha orodha ya mfano"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Rejesha Mifano</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsUSSDOpen(true)}
+              className="rounded-xl text-xs gap-1.5 h-8 text-emerald-600 border-emerald-500/30 hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
+              title="Fungua USSD Feature Phone Simulator (*152*05#)"
+            >
+              <Radio className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">USSD (*152*05#)</span>
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleResetDefaults}
+              className="rounded-xl text-xs gap-1.5 h-8 text-muted-foreground hover:text-foreground"
+              title="Rudisha orodha ya mfano"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Rejesha Mifano</span>
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -366,7 +384,7 @@ export const CHWTriageInbox: React.FC<CHWTriageInboxProps> = ({ onBack }) => {
                         )}
                       </div>
 
-                      <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
                         <Button
                           size="sm"
                           variant="outline"
@@ -375,6 +393,22 @@ export const CHWTriageInbox: React.FC<CHWTriageInboxProps> = ({ onBack }) => {
                         >
                           <PhoneCall className="w-3.5 h-3.5" />
                           Piga Simu
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const uri = SMSUssdService.getSMSDispatchUri(
+                              item.patientPhone,
+                              `Habari ${item.patientName}, kutoka Kituo cha Afya: Tafadhali fika zahanati kwa uchunguzi na ushauri wa afya.`
+                            );
+                            window.open(uri);
+                            toast.success(`Ujumbe wa SMS umeandaliwa kwa ajili ya ${item.patientName}`);
+                          }}
+                          className="h-8 rounded-xl text-xs gap-1 flex-1 sm:flex-none border-blue-500/30 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          SMS
                         </Button>
                         <Button
                           size="sm"
@@ -490,6 +524,11 @@ export const CHWTriageInbox: React.FC<CHWTriageInboxProps> = ({ onBack }) => {
           </DialogContent>
         </Dialog>
       )}
+      {/* USSD Feature Phone Simulator Modal */}
+      <USSDSimulatorModal
+        isOpen={isUSSDOpen}
+        onClose={() => setIsUSSDOpen(false)}
+      />
     </div>
   );
 };
