@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Activity, Flame, Droplet, Footprints, Moon, Utensils, MessageCircle, Dumbbell, Users, TrendingUp, Settings as SettingsIcon, ChevronRight, Heart, Trophy } from 'lucide-react';
+import { Activity, Flame, Droplet, Footprints, Moon, Utensils, MessageCircle, Dumbbell, Users, TrendingUp, Settings as SettingsIcon, ChevronRight, Heart, Trophy, Building2 } from 'lucide-react';
 import { UserProfile, WorkoutLog, MealLog, HabitLog, Screen } from '../App';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { gamificationService } from '../services/gamification';
@@ -361,6 +361,32 @@ export function Dashboard({
               </div>
             </div>
           </div>
+        </button>
+
+        {/* Dispensary & CHW Inbox Card */}
+        <button
+          onClick={() => onNavigate('chwinbox')}
+          className="w-full bg-gradient-to-br from-emerald-600/20 via-teal-600/10 to-emerald-950/20 border border-emerald-500/30 rounded-3xl p-6 text-left active:scale-[0.98] transition-all hover:border-emerald-500/60 shadow-lg"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center shadow-md">
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+                  Kituo cha Afya / CHW
+                </div>
+                <div className="text-lg text-white font-bold">
+                  Dispensary Triage Inbox
+                </div>
+              </div>
+            </div>
+            <ChevronRight className="w-6 h-6 text-white/40" />
+          </div>
+          <p className="text-xs text-white/70">
+            Fuatilia foleni ya wagonjwa, kagua ripoti za SBAR, na rekodi rufaa za haraka.
+          </p>
         </button>
       </div>
 

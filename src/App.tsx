@@ -20,6 +20,7 @@ import { ProgressPhotos } from './components/ProgressPhotos';
 import { MealPlanner } from './components/MealPlanner';
 import { Analytics } from './components/Analytics';
 import { SwahiliTriageModal } from './components/triage/SwahiliTriageModal';
+import { CHWTriageInbox } from './components/chw/CHWTriageInbox';
 import { HeartPulse } from 'lucide-react';
 import * as API from './services/api';
 import AIService from './services/ai-service';
@@ -98,7 +99,8 @@ export type Screen =
   | 'formcheck'
   | 'progressphotos'
   | 'mealplanner'
-  | 'analytics';
+  | 'analytics'
+  | 'chwinbox';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
@@ -527,12 +529,20 @@ export default function App() {
             onGetStarted={() => setCurrentScreen('onboarding')}
             onSignIn={() => setCurrentScreen('login')}
             onOpenTriage={() => setIsTriageOpen(true)}
+            onOpenCHWInbox={() => setCurrentScreen('chwinbox')}
           />
           <SwahiliTriageModal
             isOpen={isTriageOpen}
             onClose={() => setIsTriageOpen(false)}
           />
         </>
+      );
+    }
+    if (currentScreen === 'chwinbox') {
+      return (
+        <CHWTriageInbox
+          onBack={() => setCurrentScreen('home')}
+        />
       );
     }
     if (currentScreen === 'login') {
@@ -691,6 +701,12 @@ export default function App() {
       {currentScreen === 'analytics' && currentProfile && (
         <Analytics
           profile={currentProfile}
+          onBack={() => setCurrentScreen('dashboard')}
+        />
+      )}
+
+      {currentScreen === 'chwinbox' && (
+        <CHWTriageInbox
           onBack={() => setCurrentScreen('dashboard')}
         />
       )}

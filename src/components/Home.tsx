@@ -1,12 +1,13 @@
-import { Activity, Sparkles, Heart, Zap, Droplet, Moon, TrendingUp, Users } from 'lucide-react';
+import { Activity, Sparkles, Heart, Zap, Droplet, Moon, TrendingUp, Users, Building2 } from 'lucide-react';
 
 interface HomeProps {
   onGetStarted: () => void;
   onSignIn: () => void;
   onOpenTriage?: () => void;
+  onOpenCHWInbox?: () => void;
 }
 
-export function Home({ onGetStarted, onSignIn, onOpenTriage }: HomeProps) {
+export function Home({ onGetStarted, onSignIn, onOpenTriage, onOpenCHWInbox }: HomeProps) {
   return (
     <div className="min-h-screen bg-[#000000] relative overflow-hidden">
       {/* Animated gradient background */}
@@ -153,6 +154,32 @@ export function Home({ onGetStarted, onSignIn, onOpenTriage }: HomeProps) {
                   </div>
                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                     <Heart className="w-6 h-6 text-white" strokeWidth={2.5} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* CHW & Dispensary Inbox Card */}
+            {onOpenCHWInbox && (
+              <div 
+                onClick={onOpenCHWInbox}
+                className="relative overflow-hidden bg-gradient-to-br from-teal-500/15 via-blue-500/10 to-transparent backdrop-blur-xl border border-teal-500/30 rounded-3xl p-4 hover:border-teal-400 transition-all cursor-pointer group shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 text-[10px] font-semibold">
+                      <Building2 className="w-3 h-3" />
+                      Kituo cha Afya / CHW
+                    </div>
+                    <h4 className="text-base text-white font-bold">
+                      Dispensary Triage Inbox
+                    </h4>
+                    <p className="text-[11px] text-white/70">
+                      Mfumo wa madaktari na wahudumu wa jamii kufuatilia wagonjwa
+                    </p>
+                  </div>
+                  <div className="w-10 h-10 rounded-2xl bg-teal-600/30 border border-teal-500/40 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Building2 className="w-5 h-5 text-teal-300" />
                   </div>
                 </div>
               </div>

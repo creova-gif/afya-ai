@@ -34,6 +34,7 @@ import {
   PRESET_SCENARIOS,
   TriageService,
 } from '../../services/triageService';
+import { CHWInboxService } from '../../services/chwInboxService';
 import { PatientMetadata, PresetScenario, TriageResult } from '../../types/triage';
 
 interface SwahiliTriageModalProps {
@@ -130,9 +131,11 @@ export const SwahiliTriageModal: React.FC<SwahiliTriageModalProps> = ({
         transcript,
         patient,
       });
+      // Register into CHW Dispensary Inbox Queue
+      CHWInboxService.addIncomingTriage(result);
       setTriageResult(result);
       setActiveTab('patient');
-      toast.success('Uchunguzi umekamilika!');
+      toast.success('Uchunguzi umekamilika! Taarifa imetumwa kwenye mfumo wa CHW.');
     } catch (err: any) {
       console.error('Triage analysis failed:', err);
       toast.error('Hitilafu ya uchunguzi. Tafadhali jaribu tena.');
