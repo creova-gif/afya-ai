@@ -13,6 +13,8 @@ id_rsa
 # Node.js
 node_modules/
 npm-debug.log
+dist/
+build/
 
 # Python
 __pycache__/

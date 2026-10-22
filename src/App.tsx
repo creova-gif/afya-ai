@@ -19,6 +19,8 @@ import { FormCheck } from './components/FormCheck';
 import { ProgressPhotos } from './components/ProgressPhotos';
 import { MealPlanner } from './components/MealPlanner';
 import { Analytics } from './components/Analytics';
+import { SwahiliTriageModal } from './components/triage/SwahiliTriageModal';
+import { HeartPulse } from 'lucide-react';
 import * as API from './services/api';
 import AIService from './services/ai-service';
 import { WorkoutContext } from './services/ai-prompts';
@@ -110,6 +112,7 @@ export default function App() {
   const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isTriageOpen, setIsTriageOpen] = useState(false);
 
   // Initialize gamification and notifications
   useEffect(() => {
@@ -518,7 +521,19 @@ export default function App() {
   // Show home or onboarding if not completed
   if (!hasCompletedOnboarding) {
     if (currentScreen === 'home') {
-      return <Home onGetStarted={() => setCurrentScreen('onboarding')} onSignIn={() => setCurrentScreen('login')} />;
+      return (
+        <>
+          <Home
+            onGetStarted={() => setCurrentScreen('onboarding')}
+            onSignIn={() => setCurrentScreen('login')}
+            onOpenTriage={() => setIsTriageOpen(true)}
+          />
+          <SwahiliTriageModal
+            isOpen={isTriageOpen}
+            onClose={() => setIsTriageOpen(false)}
+          />
+        </>
+      );
     }
     if (currentScreen === 'login') {
       return (
@@ -679,6 +694,22 @@ export default function App() {
           onBack={() => setCurrentScreen('dashboard')}
         />
       )}
+
+      {/* Floating Global Swahili Triage Action Button */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <button
+          onClick={() => setIsTriageOpen(true)}
+          className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all font-bold text-xs sm:text-sm border-2 border-white/20"
+        >
+          <HeartPulse className="w-5 h-5 text-white animate-pulse" />
+          <span>Triage ya Kiswahili</span>
+        </button>
+      </div>
+
+      <SwahiliTriageModal
+        isOpen={isTriageOpen}
+        onClose={() => setIsTriageOpen(false)}
+      />
     </div>
   );
 }

@@ -3,9 +3,10 @@ import { Activity, Sparkles, Heart, Zap, Droplet, Moon, TrendingUp, Users } from
 interface HomeProps {
   onGetStarted: () => void;
   onSignIn: () => void;
+  onOpenTriage?: () => void;
 }
 
-export function Home({ onGetStarted, onSignIn }: HomeProps) {
+export function Home({ onGetStarted, onSignIn, onOpenTriage }: HomeProps) {
   return (
     <div className="min-h-screen bg-[#000000] relative overflow-hidden">
       {/* Animated gradient background */}
@@ -131,7 +132,31 @@ export function Home({ onGetStarted, onSignIn }: HomeProps) {
               </div>
             </div>
 
-            {/* Value Proposition Banner */}
+            {/* Swahili Clinical Triage Card */}
+            {onOpenTriage && (
+              <div 
+                onClick={onOpenTriage}
+                className="relative overflow-hidden bg-gradient-to-br from-emerald-500/20 via-teal-500/10 to-transparent backdrop-blur-xl border border-emerald-500/40 rounded-3xl p-5 hover:border-emerald-400 transition-all cursor-pointer group shadow-lg"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      MPYA / NEW
+                    </div>
+                    <h3 className="text-lg text-white font-bold">
+                      Uchunguzi wa Dalili (Triage)
+                    </h3>
+                    <p className="text-xs text-white/70">
+                      Eleza dalili zako kwa Kiswahili & tuma kwa mhudumu wa afya
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                    <Heart className="w-6 h-6 text-white" strokeWidth={2.5} />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* CTA Section - Redesigned */}
