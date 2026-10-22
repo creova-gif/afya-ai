@@ -1,6 +1,7 @@
 import { ArrowLeft, Plus, Users, User, Baby, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { UserProfile } from '../App';
+import { FamilyCircleView } from './family/FamilyCircleView';
 
 interface FamilyProfilesProps {
   profiles: UserProfile[];
@@ -126,7 +127,16 @@ export function FamilyProfiles({ profiles, currentProfile, onAddProfile, onSwitc
         </div>
       </div>
 
-      <div className="px-6 py-6 space-y-4">
+      <div className="px-6 py-6 space-y-6">
+        {/* Collective Family Health Circles & Rings */}
+        <FamilyCircleView />
+
+        <div className="pt-2">
+          <h2 className="text-xl text-white font-bold mb-3 px-1">
+            {text.members} ({profiles.length})
+          </h2>
+        </div>
+
         {profiles.map((profile) => {
           const isActive = currentProfile?.id === profile.id;
           const colors = getProfileColor(profile.profileType);

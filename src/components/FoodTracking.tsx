@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ArrowLeft, Plus, Search, Flame, Apple, Coffee, UtensilsCrossed, Cookie } from 'lucide-react';
+import { ArrowLeft, Plus, Search, Flame, Apple, Coffee, UtensilsCrossed, Cookie, Camera } from 'lucide-react';
 import { UserProfile, MealLog } from '../App';
+import { MealVisionModal } from './food/MealVisionModal';
 
 interface FoodTrackingProps {
   profile: UserProfile;
@@ -13,6 +14,7 @@ export function FoodTracking({ profile, todayMeals, onAddMeal, onBack }: FoodTra
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMealType, setSelectedMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('breakfast');
   const [showAddMeal, setShowAddMeal] = useState(false);
+  const [showVisionModal, setShowVisionModal] = useState(false);
 
   const text = profile.language === 'sw' ? {
     nutrition: 'Lishe',
@@ -106,6 +108,13 @@ export function FoodTracking({ profile, todayMeals, onAddMeal, onBack }: FoodTra
               {text.nutrition}
             </h1>
             <button
+              onClick={() => setShowVisionModal(true)}
+              className="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center hover:bg-emerald-500 transition-colors shadow-lg"
+              title="Piga Picha ya Chakula (AI Vision)"
+            >
+              <Camera className="w-5 h-5 text-white" strokeWidth={2.5} />
+            </button>
+            <button
               onClick={() => setShowAddMeal(true)}
               className="w-10 h-10 rounded-full bg-[#FF6B35] flex items-center justify-center hover:bg-[#E85A2A] transition-colors shadow-lg"
             >
@@ -178,6 +187,26 @@ export function FoodTracking({ profile, todayMeals, onAddMeal, onBack }: FoodTra
                 {text.remaining}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* AI Camera Vision Banner */}
+        <div 
+          onClick={() => setShowVisionModal(true)}
+          className="bg-gradient-to-r from-emerald-500/20 via-teal-500/15 to-transparent border border-emerald-500/30 rounded-3xl p-5 cursor-pointer hover:border-emerald-400 transition-all shadow-lg flex items-center justify-between group"
+        >
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              AI VISION KAMERA
+            </div>
+            <h3 className="text-lg text-white font-bold">Piga Picha ya Chakula Chako</h3>
+            <p className="text-xs text-white/70">
+              Kadiria kalori na protini za Ugali, Samaki, Chipsi Mayai na Maharage moja kwa moja
+            </p>
+          </div>
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform shrink-0">
+            <Camera className="w-6 h-6" />
           </div>
         </div>
 
@@ -310,6 +339,13 @@ export function FoodTracking({ profile, todayMeals, onAddMeal, onBack }: FoodTra
           </div>
         </div>
       )}
+
+      {/* AI Meal Vision Modal */}
+      <MealVisionModal
+        isOpen={showVisionModal}
+        onClose={() => setShowVisionModal(false)}
+        onSaveMeal={onAddMeal}
+      />
     </div>
   );
 }
