@@ -1,5 +1,6 @@
 // AI Service - OpenAI Integration for KUIMARISHA AI
 import { buildCompleteLLMPrompt, WorkoutContext } from './ai-prompts';
+import { getCurrentSession } from '../utils/supabase/client';
 
 interface AIResponse {
   message: string;
@@ -33,6 +34,7 @@ export class AIService {
       ],
       temperature: 0.7,
       responseFormat: 'json',
+      language: context.language,
     });
 
     try {
@@ -66,6 +68,7 @@ export class AIService {
     const response = await this.callAI({
       messages,
       temperature: 0.8,
+      language: context.language,
     });
 
     return response.message;
@@ -91,6 +94,7 @@ export class AIService {
         { role: 'user', content: user },
       ],
       temperature: 0.7,
+      language: context.language,
     });
 
     return response.message;
@@ -118,6 +122,7 @@ export class AIService {
       ],
       temperature: 0.7,
       responseFormat: 'json',
+      language: data.language,
     });
 
     try {
@@ -135,19 +140,31 @@ export class AIService {
     messages: ChatMessage[];
     temperature?: number;
     responseFormat?: 'text' | 'json';
+    language?: 'sw' | 'en';
   }): Promise<AIResponse> {
+    const auth = await this.sessionAuth();
+    if (!auth) {
+      throw new Error('Authentication required');
+    }
+    const headers = auth.headers;
+
     try {
       const response = await fetch(`${this.API_BASE}/ai/generate`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(params),
+        headers,
+        body: JSON.stringify({
+          messages: params.messages.filter((message) => message.role !== 'system'),
+          temperature: params.temperature,
+          responseFormat: params.responseFormat,
+          language: params.language ?? 'sw',
+        }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'AI generation failed');
+        const errorData = await response.json().catch(() => ({}));
+        const error = new Error(errorData.error || 'AI generation failed');
+        (error as Error & { code?: string }).code = errorData.code;
+        throw error;
       }
 
       const data = await response.json();
@@ -155,6 +172,25 @@ export class AIService {
     } catch (err) {
       console.error('AI Service error:', err);
       throw err;
+    }
+  }
+
+  /**
+   * Session access token only. Returns null when nobody is signed in.
+   */
+  private static async sessionAuth(): Promise<{ headers: Record<string, string>; userId: string } | null> {
+    try {
+      const session = await getCurrentSession();
+      if (!session?.access_token || !session.user?.id) return null;
+      return {
+        userId: session.user.id,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      };
+    } catch {
+      return null;
     }
   }
 
@@ -260,16 +296,24 @@ export class AIService {
     context: any;
   }): Promise<void> {
     try {
-      await fetch(`${this.API_BASE}/ai/conversation`, {
+      const auth = await this.sessionAuth();
+      if (!auth) return;
+      if (userId !== auth.userId) {
+        console.error('Refusing to save a conversation for a different user');
+        return;
+      }
+
+      const response = await fetch(`${this.API_BASE}/ai/conversation`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: auth.headers,
         body: JSON.stringify({
-          userId,
+          userId: auth.userId,
           ...conversationData,
         }),
       });
+      if (!response.ok) {
+        console.error('Failed to save conversation');
+      }
     } catch (err) {
       console.error('Failed to save conversation:', err);
       // Non-critical error, don't throw
@@ -281,7 +325,15 @@ export class AIService {
    */
   static async getConversationHistory(userId: string, limit = 20): Promise<ChatMessage[]> {
     try {
-      const response = await fetch(`${this.API_BASE}/ai/conversation/${userId}?limit=${limit}`);
+      const auth = await this.sessionAuth();
+      if (!auth || userId !== auth.userId) {
+        return [];
+      }
+
+      const response = await fetch(
+        `${this.API_BASE}/ai/conversation/${encodeURIComponent(auth.userId)}?limit=${limit}`,
+        { headers: auth.headers },
+      );
       
       if (!response.ok) {
         throw new Error('Failed to fetch conversation history');
